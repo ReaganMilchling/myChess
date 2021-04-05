@@ -134,9 +134,11 @@ public class Table {
                             if (movedPiece.getPieceType().isEmpty()) {
                                 selectedSquare = null;
                             }
-                        }
-                        else {
-                            System.out.println("hi");
+                        } else if (chessBoard.getSquare(xPos, yPos).getPiece().getPlayerTeam() ==
+                                   chessBoard.getCurrentPlayer().getTeam()) {
+                            selectedSquare = chessBoard.getSquare(xPos, yPos);
+                            movedPiece = selectedSquare.getPiece();
+                        } else {
                             destinationSquare = chessBoard.getSquare(xPos, yPos);
                             destinationPiece = destinationSquare.getPiece();
                             MoveFactory mf = new MoveFactory(chessBoard,
