@@ -38,37 +38,24 @@ public abstract class Move {
 
     public Board execute() {
         final BoardBuilder builder = new BoardBuilder();
-        for (final Piece piece : this.board.getCurrentPlayer().getPieces()) {
-            if (!this.movedPiece.equals(piece)) {
-                builder.setPiece(piece);
-            }
-        }
-        for (final Piece piece : this.board.getCurrentPlayer().getOpponent().getPieces()) {
-            builder.setPiece(piece);
-        }
+
+        builder.setBoardUnchanged(this.movedPiece,
+                                  this.board.getCurrentPlayer().getPieces(),
+                                  this.board.getCurrentPlayer().getOpponent().getPieces());
+
         if (this.getDestinationYPos() == 0 || this.getDestinationYPos() == 7) {
             builder.setPiece(this.movedPiece.movePiece(this, true));
         } else {
             builder.setPiece(this.movedPiece.movePiece(this));
         }
-        builder.setMove(this.board.getCurrentPlayer().getOpponent().getTeam());
+        builder.setNextPlayerTurn(this.board.getCurrentPlayer().getOpponent().getTeam());
         builder.setNull();
         return builder.build();
     }
 
     public abstract String toString();
-
-    public static class NullMove extends Move {
-
-        public NullMove() {
-            super(null, -1, -1, null);
-        }
-
-        @Override
-        public String toString() {
-            return "f";
-        }
-    }
+    public abstract boolean equals(Object obj);
+    public abstract boolean isAttacking();
 
     public static class NormalMove extends Move {
 
@@ -79,6 +66,24 @@ public abstract class Move {
         @Override
         public String toString() {
             return movedPiece.toString() + (8 - destinationYPos) + Utils.convertToFile(destinationXPos);
+        }
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (!(other instanceof Move)) {
+                return false;
+            }
+            final Move otherMove = (Move) other;
+            return this.getDestinationYPos() == otherMove.getDestinationYPos() &&
+                    this.getDestinationXPos() == otherMove.getDestinationXPos() &&
+                    this.getMovedPiece().equals(otherMove.getMovedPiece());
+        }
+
+        @Override
+        public boolean isAttacking() {
+            return false;
         }
     }
 
@@ -91,9 +96,32 @@ public abstract class Move {
             this.attackedPiece = attackedPiece;
         }
 
+        public Piece getAttackedPiece() {
+            return this.attackedPiece;
+        }
+
         @Override
         public String toString() {
             return movedPiece.toString() + "x" + (8 - destinationYPos) + Utils.convertToFile(destinationXPos);
+        }
+
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (!(other instanceof Move)) {
+                return false;
+            }
+            final Move otherMove = (Move) other;
+            return this.getDestinationYPos() == otherMove.getDestinationYPos() &&
+                    this.getDestinationXPos() == otherMove.getDestinationXPos() &&
+                    this.getMovedPiece().equals(otherMove.getMovedPiece());
+        }
+
+        @Override
+        public boolean isAttacking() {
+            return true;
         }
     }
 

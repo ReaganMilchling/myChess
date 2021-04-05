@@ -15,7 +15,7 @@ public class Square {
         return this.piece;
     }
     public boolean isOccupied() {
-        return this.piece.getPlayerTeam() != null;
+        return !this.piece.getPieceType().isEmpty();
     }
 
     @Override

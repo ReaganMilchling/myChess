@@ -61,19 +61,126 @@ public abstract class Piece {
             return false;
         }
         final Piece otherPiece = (Piece) other;
-        return this.pieceXPosition == otherPiece.pieceXPosition && this.pieceYPosition ==  otherPiece.getPieceYPosition() &&
-                this.pieceType == otherPiece.getPieceType() && this.playerTeam == otherPiece.getPlayerTeam() &&
-                this.isFirstMove == otherPiece.isFirstMove();
+        return this.getPieceXPosition() == otherPiece.getPieceXPosition() &&
+               this.getPieceXPosition() ==  otherPiece.getPieceYPosition() &&
+               this.getPieceType() == otherPiece.getPieceType() &&
+               this.getPlayerTeam() == otherPiece.getPlayerTeam() &&
+               this.isFirstMove() == otherPiece.isFirstMove();
     }
 
     public enum PieceType {
-        PAWN(1, "P", '\u265F', '\u2659'),
-        ROOK(5, "R", '\u265C', '\u2656'),
-        BISHOP(3, "B", '\u265D', '\u2657'),
-        KNIGHT(3, "N", '\u265E', '\u2658'),
-        QUEEN(10, "Q", '\u265B', '\u2655'),
-        KING(10, "K", '\u265A', '\u2654'),
-        EMPTY(0, "E", '0', '0');
+        PAWN(1, "P", '\u265F', '\u2659'){
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean isRook() {
+                return false;
+            }
+
+            @Override
+            public boolean isKing() {
+                return false;
+            }
+        },
+        ROOK(5, "R", '\u265C', '\u2656') {
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean isRook() {
+                return true;
+            }
+
+            @Override
+            public boolean isKing() {
+                return false;
+            }
+        },
+        BISHOP(3, "B", '\u265D', '\u2657') {
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean isRook() {
+                return false;
+            }
+
+            @Override
+            public boolean isKing() {
+                return false;
+            }
+        },
+        KNIGHT(3, "N", '\u265E', '\u2658') {
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean isRook() {
+                return false;
+            }
+
+            @Override
+            public boolean isKing() {
+                return false;
+            }
+        },
+        QUEEN(10, "Q", '\u265B', '\u2655') {
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean isRook() {
+                return false;
+            }
+
+            @Override
+            public boolean isKing() {
+                return false;
+            }
+        },
+        KING(10, "K", '\u265A', '\u2654') {
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean isRook() {
+                return false;
+            }
+
+            @Override
+            public boolean isKing() {
+                return true;
+            }
+        },
+        EMPTY(0, "E", '0', '0') {
+            @Override
+            public boolean isEmpty() {
+                return true;
+            }
+
+            @Override
+            public boolean isRook() {
+                return false;
+            }
+
+            @Override
+            public boolean isKing() {
+                return false;
+            }
+        };
 
         private final int pieceValue;
         private final String pieceName;
@@ -100,5 +207,9 @@ public abstract class Piece {
         public char getWhiteChar() {
             return this.whiteChar;
         }
+
+        public abstract boolean isEmpty();
+        public abstract boolean isRook();
+        public abstract boolean isKing();
     }
 }

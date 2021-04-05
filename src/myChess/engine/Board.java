@@ -41,8 +41,11 @@ public class Board {
         this.WhitePlayerLegalMoves = calculateLegalMoves(WhitePlayerPieces);
         this.whitePlayer = new Player.WhitePlayer(this, WhitePlayerLegalMoves, BlackPlayerLegalMoves);
         this.blackPlayer = new Player.BlackPlayer(this, BlackPlayerLegalMoves, WhitePlayerLegalMoves);
-        //todo theres a better way to implement this
-        this.currentPlayer = builder.playersTurn.choosePlayer(this.whitePlayer, this.blackPlayer);
+        if (builder.getPlayersTurn().isWhite()) {
+            this.currentPlayer = whitePlayer;
+        } else {
+            this.currentPlayer = blackPlayer;
+        }
     }
 
     //getters
@@ -73,6 +76,7 @@ public class Board {
     public Square getSquare(int x, int y) {
         return gameBoard[x][y];
     }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -146,6 +150,6 @@ public class Board {
     }
 
     private Square[][] createNewBoard(BoardBuilder builder) {
-        return builder.chessBoard;
+        return builder.getChessBoard();
     }
 }

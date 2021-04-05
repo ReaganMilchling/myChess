@@ -1,57 +1,35 @@
 package myChess.engine;
 
+import myChess.piece.Piece;
+
 public class MoveFactory {
-    //todo refactor this class
     private final Board transitionBoard;
-    private final Move move;
-    private final MoveStatus moveStatus;
 
     public MoveFactory(final Board board,
-                       final Move move,
-                       final MoveStatus moveStatus) {
-        this.transitionBoard = board;
-        this.move = move;
-        this.moveStatus = moveStatus;
-    }
+                       final Piece piece,
+                       final int destinationX,
+                       final int destinationY,
+                       final Piece attackedPiece) {
+        //sets the move type
 
-    public static Move createMove(final Board board,
-                                  final int currentX,
-                                  final int currentY,
-                                  final int destinationX,
-                                  final int destinationY) {
-        for (final Move move : board.getAllLegalMoves()) {
-            if (move.getDestinationYPos() == destinationY &&
-                    move.getDestinationXPos() == destinationX &&
-                    move.getCurrentYPos() == currentY &&
-                    move.getCurrentXPos() == currentX) {
-                return move;
-            }
+        Move move;
+        if (attackedPiece.getPieceType() == Piece.PieceType.EMPTY) {
+            move = new Move.NormalMove(board, destinationX, destinationY, piece);
+        } else {
+            move = new Move.AttackMove(board, destinationX, destinationY, piece, attackedPiece);
         }
-        return new Move.NullMove();
-    }
-
-    public MoveStatus getMoveStatus() {
-        return this.moveStatus;
+        if (board.getCurrentPlayer().isMoveLegal(move)) {
+            //makes the move and sets it equal to transition board
+            this.transitionBoard = move.execute();
+            //todo log the move to stack
+        } else {
+            //resets the transition board to the original board
+            //boards are meant to be immutable
+            this.transitionBoard = board;
+        }
     }
 
     public Board getTransitionBoard() {
         return this.transitionBoard;
-    }
-
-    public enum MoveStatus {
-        DONE{
-            @Override
-            public boolean isDone() {
-                return true;
-            }
-        },
-        ILLEGAL{
-            @Override
-            public boolean isDone() {
-                return false;
-            }
-        };
-
-        public abstract boolean isDone();
     }
 }

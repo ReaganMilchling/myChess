@@ -49,6 +49,7 @@ public class Utils {
         //helper function to reduce code and make it easier to read
         final List<Move> legalMovesHelper = new ArrayList<>();
 
+        //todo check if move leaves king in check
         //try/catch to know if we are on the board or not
         try {
             int x = piece.getPieceXPosition() + xOff;
@@ -69,6 +70,7 @@ public class Utils {
         //helper function to reduce code and make it easier to read
         final List<Move> legalMovesHelper = new ArrayList<>();
 
+        //todo check if move leaves king in check
         //try/catch to know if we are on the board or not
         try {
             int x = piece.getPieceXPosition() + xOff;
@@ -91,6 +93,7 @@ public class Utils {
         //helper function to reduce code and make it easier to read
         final List<Move> legalMovesHelper = new ArrayList<>();
 
+        //todo check if move leaves king in check
         for (int i = 1; i < distance; i++) {
             //try/catch to know if we are on the board or not
             try {

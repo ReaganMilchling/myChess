@@ -39,9 +39,10 @@ public class Table {
     private final int DOT_SIZE;
     private final int FONT_SIZE;
 
-    private Square source;
-    private Square destination;
-    private Piece moved;
+    private Square selectedSquare;
+    private Square destinationSquare;
+    private Piece movedPiece;
+    private Piece destinationPiece;
 
     private final String lightColor;
     private final String darkColor;
@@ -126,31 +127,28 @@ public class Table {
             addEventFilter(MouseEvent.MOUSE_CLICKED, new javafx.event.EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent e) {
-                    if (e.getButton() == MouseButton.SECONDARY) {
-                        source = null;
-                        destination = null;
-                        moved = null;
-                    } else if (e.getButton() == MouseButton.PRIMARY) {
-                        if (source == null) {
-                            source = chessBoard.getSquare(xPos, yPos);
-                            moved = source.getPiece();
-                            if (moved.getPieceType() == Piece.PieceType.EMPTY) {
-                                source = null;
+                    if (e.getButton() == MouseButton.PRIMARY) {
+                        if (selectedSquare == null) {
+                            selectedSquare = chessBoard.getSquare(xPos, yPos);
+                            movedPiece = selectedSquare.getPiece();
+                            if (movedPiece.getPieceType().isEmpty()) {
+                                selectedSquare = null;
                             }
-                        } else {
-                            destination = chessBoard.getSquare(xPos, yPos);
-                            final Move move = MoveFactory.createMove(chessBoard,
-                                                                source.getPiece().getPieceXPosition(),
-                                                                source.getPiece().getPieceYPosition(),
-                                                                destination.getPiece().getPieceXPosition(),
-                                                                destination.getPiece().getPieceYPosition());
-                            final MoveFactory transition = chessBoard.getCurrentPlayer().makeMove(move);
-                            if (transition.getMoveStatus().isDone()) {
-                                chessBoard = transition.getTransitionBoard();
-                            }
-                            source = null;
-                            destination = null;
-                            moved = null;
+                        }
+                        else {
+                            System.out.println("hi");
+                            destinationSquare = chessBoard.getSquare(xPos, yPos);
+                            destinationPiece = destinationSquare.getPiece();
+                            MoveFactory mf = new MoveFactory(chessBoard,
+                                                             movedPiece,
+                                                             destinationSquare.getPiece().getPieceXPosition(),
+                                                             destinationSquare.getPiece().getPieceYPosition(),
+                                                             destinationPiece);
+                            chessBoard = mf.getTransitionBoard();
+                            selectedSquare = null;
+                            destinationSquare = null;
+                            movedPiece = null;
+
                         }
                         Platform.runLater(new Runnable() {
                             @Override
@@ -161,19 +159,17 @@ public class Table {
                     }
                 }
             });
-
             setPrefSize(SQUARE_SIZE, SQUARE_SIZE);
             drawTile(chessBoard);
-
         }
+
         public void drawTile(final Board board) {
             setColor();
             assignImage(board);
-            highlightLegals(board);
-            //System.out.println(board.getCurrentPlayer().toString());
+            highlightLegalMoves(board);
         }
 
-        public void highlightLegals(Board board) {
+        public void highlightLegalMoves(Board board) {
             for (final Move move : getLegalMoves(board)){
                 if (move.getDestinationXPos() == this.xPos && move.getDestinationYPos() == this.yPos) {
                     try {
@@ -192,10 +188,10 @@ public class Table {
         }
 
         private Collection<Move> getLegalMoves(final Board board) {
-            if (moved != null) {
-                if (moved.getPieceType() != Piece.PieceType.EMPTY &&
-                    moved.getPlayerTeam() == board.getCurrentPlayer().getTeam()) {
-                    return moved.calculateMoves(board);
+            if (movedPiece != null) {
+                if (movedPiece.getPieceType() != Piece.PieceType.EMPTY &&
+                    movedPiece.getPlayerTeam() == board.getCurrentPlayer().getTeam()) {
+                    return movedPiece.calculateMoves(board);
                 }
             }
             return Collections.emptyList();

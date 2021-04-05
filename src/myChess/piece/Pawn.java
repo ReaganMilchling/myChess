@@ -33,10 +33,20 @@ public class Pawn extends Piece {
     public Collection<Move> calculateMoves(Board board) {
         final List<Move> legalMoves = new ArrayList<>();
 
+        //normal movement
+        try {
+            int x = this.getPieceXPosition();
+            int y = this.getPieceYPosition() + this.getPlayerTeam().getOffset();
+            if (!board.getSquare(x, y).isOccupied()) {
+                legalMoves.add(new Move.AttackMove(board, x, y, this, board.getSquare(x,y).getPiece()));
+            }
+        } catch (IndexOutOfBoundsException ignored) {
 
+        }
+        //attacking moves
         legalMoves.addAll(Utils.calculatePawnAttackHelper(board, -1, 1, this));
         legalMoves.addAll(Utils.calculatePawnAttackHelper(board, 1, 1, this));
-        legalMoves.addAll(Utils.calculateMovesHelper(board, 0, 1, this));
+        //pawn jump
         if (this.isFirstMove) {
             legalMoves.addAll(Utils.calculateMovesHelper(board, 0, 2, this));
         }

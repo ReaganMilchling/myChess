@@ -2,7 +2,6 @@ package myChess.player;
 
 import myChess.engine.Board;
 import myChess.engine.Move;
-import myChess.engine.MoveFactory;
 import myChess.piece.Piece;
 
 import java.util.Collection;
@@ -27,14 +26,6 @@ public abstract class Player {
 
     public boolean isMoveLegal(final Move move) {
         return this.legalMoves.contains(move);
-    }
-
-    public MoveFactory makeMove(final Move move) {
-        if (!isMoveLegal(move)) {
-            return new MoveFactory(this.board, move, MoveFactory.MoveStatus.ILLEGAL);
-        }
-        final Board transitionBoard = move.execute();
-        return new MoveFactory(transitionBoard, move, MoveFactory.MoveStatus.DONE);
     }
 
     public abstract Player getOpponent();
