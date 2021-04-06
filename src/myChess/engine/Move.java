@@ -1,6 +1,8 @@
 package myChess.engine;
 
+import myChess.piece.Empty;
 import myChess.piece.Piece;
+import myChess.piece.Rook;
 
 public abstract class Move {
 
@@ -50,11 +52,25 @@ public abstract class Move {
         }
         builder.setNextPlayerTurn(this.board.getCurrentPlayer().getOpponent().getTeam());
         builder.setNull();
+
+        if (this.isCastle()) {
+            //castling logic
+            //resets rook on corner to empty tile and sets the rook correctly
+            if (this.getDestinationXPos() == 2) {
+                builder.setPiece(new Empty(0, this.getCurrentYPos()));
+                builder.setPiece(new Rook(this.getMovedPiece().getPlayerTeam(), 3, this.getCurrentYPos(), false));
+            } else {
+                builder.setPiece(new Empty(7, this.getCurrentYPos()));
+                builder.setPiece(new Rook(this.getMovedPiece().getPlayerTeam(), 5, this.getCurrentYPos(), false));
+            }
+        }
+
         return builder.build();
     }
 
     public abstract String toString();
     public abstract boolean equals(Object obj);
+    public abstract boolean isCastle();
     public abstract boolean isAttacking();
 
     public static class NormalMove extends Move {
@@ -65,7 +81,7 @@ public abstract class Move {
 
         @Override
         public String toString() {
-            return movedPiece.toString() + (8 - destinationYPos) + Utils.convertToFile(destinationXPos);
+            return movedPiece.toString() + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
         }
         @Override
         public boolean equals(final Object other) {
@@ -79,6 +95,11 @@ public abstract class Move {
             return this.getDestinationYPos() == otherMove.getDestinationYPos() &&
                     this.getDestinationXPos() == otherMove.getDestinationXPos() &&
                     this.getMovedPiece().equals(otherMove.getMovedPiece());
+        }
+
+        @Override
+        public boolean isCastle() {
+            return false;
         }
 
         @Override
@@ -102,7 +123,7 @@ public abstract class Move {
 
         @Override
         public String toString() {
-            return movedPiece.toString() + "x" + (8 - destinationYPos) + Utils.convertToFile(destinationXPos);
+            return movedPiece.toString() + "x" + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
         }
 
         @Override
@@ -120,8 +141,59 @@ public abstract class Move {
         }
 
         @Override
+        public boolean isCastle() {
+            return false;
+        }
+
+        @Override
         public boolean isAttacking() {
             return true;
+        }
+    }
+
+    public static class CastleMove extends Move {
+
+        protected final Piece movedRook;
+
+        public CastleMove(Board board, int x, int y, Piece king, Piece rook) {
+            super(board, x, y, king);
+            this.movedRook = rook;
+        }
+
+        @Override
+        public String toString() {
+            if (this.destinationXPos == 6) {
+                return "0-0";
+            } else {
+                return "0-0-0";
+            }
+        }
+
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (!(other instanceof Move)) {
+                return false;
+            }
+            final Move otherMove = (Move) other;
+            if (otherMove.isCastle()) {
+                return this.getDestinationYPos() == otherMove.getDestinationYPos() &&
+                        this.getDestinationXPos() == otherMove.getDestinationXPos() &&
+                        this.getMovedPiece().equals(otherMove.getMovedPiece());
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isCastle() {
+            return true;
+        }
+
+        @Override
+        public boolean isAttacking() {
+            return false;
         }
     }
 

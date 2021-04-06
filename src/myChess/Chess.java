@@ -3,7 +3,6 @@ package myChess;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import myChess.engine.Board;
 import myChess.gui.Table;
 
 
@@ -14,8 +13,6 @@ public class Chess extends Application {
 
         Table table = new Table();
         Scene scene = new Scene(table.createContent());
-
-        Board board = new Board();
 
         primaryStage.setTitle("myChess");
         primaryStage.setScene(scene);

@@ -45,7 +45,7 @@ public class Table {
     private Piece movedPiece;
     private Piece destinationPiece;
     private Collection<Square> redSquares = new ArrayList<>();
-    
+
     private final String lightColor;
     private final String darkColor;
     private final String lightRedColor;
@@ -150,6 +150,11 @@ public class Table {
                             if (movedPiece.getPieceType().isEmpty()) {
                                 selectedSquare = null;
                             }
+                        } else if (selectedSquare.getPiece().getPieceXPosition() == xPos &&
+                                selectedSquare.getPiece().getPieceYPosition() == yPos) {
+                            selectedSquare = null;
+                            destinationSquare = null;
+                            movedPiece = null;
                         } else if (chessBoard.getSquare(xPos, yPos).getPiece().getPlayerTeam() ==
                                    chessBoard.getCurrentPlayer().getTeam()) {
                             redSquares.clear();
@@ -159,12 +164,12 @@ public class Table {
                             redSquares.clear();
                             destinationSquare = chessBoard.getSquare(xPos, yPos);
                             destinationPiece = destinationSquare.getPiece();
+
+                            //creates the move
                             MoveFactory mf = new MoveFactory(chessBoard,
-                                                             movedPiece,
-                                                             destinationSquare.getPiece().getPieceXPosition(),
-                                                             destinationSquare.getPiece().getPieceYPosition(),
-                                                             destinationPiece);
+                                                 getMove(chessBoard, selectedSquare.getPiece(), destinationPiece));
                             chessBoard = mf.getTransitionBoard();
+
                             selectedSquare = null;
                             destinationSquare = null;
                             movedPiece = null;
@@ -178,7 +183,7 @@ public class Table {
                         });
                     }
                     if (e.getButton() == MouseButton.SECONDARY) {
-
+                        //right click to add red squares and deselect all
                         redSquares.add(chessBoard.getSquare(xPos, yPos));
                         selectedSquare = null;
                         destinationSquare = null;
@@ -203,8 +208,20 @@ public class Table {
             highlightLegalMoves(board);
         }
 
+        public Move getMove(final Board board, Piece start, Piece destination) {
+            //goes through legal moves of the piece specified and looks for the correct destination
+            for (final Move move : getPieceLegalMoves(board)){
+                if (move.getMovedPiece().equals(start) &&
+                        move.getDestinationXPos() == destination.getPieceXPosition() &&
+                        move.getDestinationYPos() == destination.getPieceYPosition()) {
+                    return move;
+                }
+            }
+            return null;
+        }
+
         public void highlightLegalMoves(Board board) {
-            for (final Move move : getLegalMoves(board)){
+            for (final Move move : getPieceLegalMoves(board)){
                 if (move.getDestinationXPos() == this.xPos && move.getDestinationYPos() == this.yPos) {
                     try {
                         BufferedImage image = ImageIO.read(new File("res/greendot.png"));
@@ -221,7 +238,7 @@ public class Table {
             }
         }
 
-        private Collection<Move> getLegalMoves(final Board board) {
+        private Collection<Move> getPieceLegalMoves(final Board board) {
             if (movedPiece != null) {
                 if (movedPiece.getPieceType() != Piece.PieceType.EMPTY &&
                     movedPiece.getPlayerTeam() == board.getCurrentPlayer().getTeam()) {

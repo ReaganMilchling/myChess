@@ -37,8 +37,58 @@ public class King extends Piece {
         legalMoves.addAll(Utils.calculateMovesHelper(board, 1, -1,this));
         legalMoves.addAll(Utils.calculateMovesHelper(board, -1, 1,this));
         legalMoves.addAll(Utils.calculateMovesHelper(board, -1, -1,this));
+        //king side
+        legalMoves.addAll(calculateKingSideCastle(board, this));
+        //queen side
+        legalMoves.addAll(calculateQueenSideCastle(board, this));
 
         return legalMoves;
+    }
+
+    public Collection<Move> calculateKingSideCastle(final Board board, final Piece king) {
+        final List<Move> legalMovesHelper = new ArrayList<>();
+        int x = king.getPieceXPosition();
+        int y = king.getPieceYPosition();
+
+        try {
+            if (king.isFirstMove()){
+                final Piece rook = board.getSquare(x + 3, y).getPiece();
+                if (rook.getPieceType().isRook() && rook.isFirstMove()) {
+                    if (!board.getSquare(x + 1, y).isOccupied() && !board.getSquare(x + 2, y).isOccupied()) {
+                        //todo add the checks for each piece here
+                        if (true) {
+                            legalMovesHelper.add(new Move.CastleMove(board, x + 2, y, king, rook));
+                        }
+                    }
+                }
+            }
+        } catch (IndexOutOfBoundsException ignored){
+
+        }
+        return legalMovesHelper;
+    }
+
+    public Collection<Move> calculateQueenSideCastle(final Board board, final Piece king) {
+        final List<Move> legalMovesHelper = new ArrayList<>();
+        int x = king.getPieceXPosition();
+        int y = king.getPieceYPosition();
+
+        try {
+            if (king.isFirstMove()){
+                final Piece rook = board.getSquare(x - 4, y).getPiece();
+                if (rook.getPieceType().isRook() && rook.isFirstMove()) {
+                    if (!board.getSquare(x - 1, y).isOccupied() && !board.getSquare(x - 2, y).isOccupied() && !board.getSquare(x - 3, y).isOccupied()) {
+                        //todo add the checks for each piece here
+                        if (true) {
+                            legalMovesHelper.add(new Move.CastleMove(board, x - 2, y, king, rook));
+                        }
+                    }
+                }
+            }
+        } catch (IndexOutOfBoundsException ignored){
+
+        }
+        return legalMovesHelper;
     }
 
     @Override

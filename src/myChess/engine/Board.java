@@ -133,11 +133,9 @@ public class Board {
         board[7][7] = new Square(new Rook(Team.WHITE, 7, 7, true));
 
         for (int i = 0; i < 8; i++) {
-
             //adding pawns
             board[i][1] = new Square(new Pawn(Team.BLACK, i, 1, true));
             board[i][6] = new Square(new Pawn(Team.WHITE, i, 6, true));
-
             //setting all other squares to null
             for (int j = 0; j < 8; j++) {
                 if (board[i][j] == null) {
@@ -145,7 +143,6 @@ public class Board {
                 }
             }
         }
-
         return board;
     }
 

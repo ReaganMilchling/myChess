@@ -38,7 +38,7 @@ public class Pawn extends Piece {
             int x = this.getPieceXPosition();
             int y = this.getPieceYPosition() + this.getPlayerTeam().getOffset();
             if (!board.getSquare(x, y).isOccupied()) {
-                legalMoves.add(new Move.AttackMove(board, x, y, this, board.getSquare(x,y).getPiece()));
+                legalMoves.add(new Move.NormalMove(board, x, y, this));
             }
         } catch (IndexOutOfBoundsException ignored) {
 
