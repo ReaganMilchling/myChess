@@ -11,6 +11,8 @@ public abstract class Player {
     protected final Board board;
     protected final Collection<Move> legalMoves;
     protected final Collection<Move> opponentLegalMoves;
+    protected final Collection<Move> checkMoves;
+    protected final Collection<Move> opponentCheckMoves;
 
     public Player(final Board board,
                   final Collection<Move> moves,
@@ -18,6 +20,8 @@ public abstract class Player {
         this.board = board;
         this.legalMoves = moves;
         this.opponentLegalMoves = oppMoves;
+        this.checkMoves = null;
+        this.opponentCheckMoves = null;
     }
 
     public Collection<Move> getLegalMoves() {

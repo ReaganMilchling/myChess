@@ -24,6 +24,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -43,9 +44,12 @@ public class Table {
     private Square destinationSquare;
     private Piece movedPiece;
     private Piece destinationPiece;
-
+    private Collection<Square> redSquares = new ArrayList<>();
+    
     private final String lightColor;
     private final String darkColor;
+    private final String lightRedColor;
+    private final String darkRedColor;
 
     public Table() {
         this.chessBoard = new Board();
@@ -57,6 +61,8 @@ public class Table {
         this.FONT_SIZE = BOARD_SIZE / 50;
         this.lightColor = "#FFFACD";
         this.darkColor = "#6B8E23";
+        this.lightRedColor = "#FA8072";
+        this.darkRedColor = "#B22222";
     }
 
     public Parent createContent() {
@@ -108,7 +114,15 @@ public class Table {
                         text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, FONT_SIZE));
                         StackPane.setAlignment(text, Pos.BOTTOM_RIGHT);
                     }
-
+                    if (!redSquares.isEmpty()) {
+                        for (Square square : redSquares) {
+                            if (square.getPiece().getPieceXPosition() == i) {
+                                if (square.getPiece().getPieceYPosition() == j) {
+                                    squarePane.setRedSquare();
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -119,16 +133,18 @@ public class Table {
 
         final int xPos;
         final int yPos;
+        public boolean isRed;
 
         SquarePane(int x, int y) {
             this.xPos = x;
             this.yPos = y;
-
+            this.isRed = false;
             addEventFilter(MouseEvent.MOUSE_CLICKED, new javafx.event.EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent e) {
                     if (e.getButton() == MouseButton.PRIMARY) {
                         if (selectedSquare == null) {
+                            redSquares.clear();
                             selectedSquare = chessBoard.getSquare(xPos, yPos);
                             movedPiece = selectedSquare.getPiece();
                             if (movedPiece.getPieceType().isEmpty()) {
@@ -136,9 +152,11 @@ public class Table {
                             }
                         } else if (chessBoard.getSquare(xPos, yPos).getPiece().getPlayerTeam() ==
                                    chessBoard.getCurrentPlayer().getTeam()) {
+                            redSquares.clear();
                             selectedSquare = chessBoard.getSquare(xPos, yPos);
                             movedPiece = selectedSquare.getPiece();
                         } else {
+                            redSquares.clear();
                             destinationSquare = chessBoard.getSquare(xPos, yPos);
                             destinationPiece = destinationSquare.getPiece();
                             MoveFactory mf = new MoveFactory(chessBoard,
@@ -159,6 +177,20 @@ public class Table {
                             }
                         });
                     }
+                    if (e.getButton() == MouseButton.SECONDARY) {
+
+                        redSquares.add(chessBoard.getSquare(xPos, yPos));
+                        selectedSquare = null;
+                        destinationSquare = null;
+                        movedPiece = null;
+
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                boardPane.drawBoard(chessBoard);
+                            }
+                        });
+                    }
                 }
             });
             setPrefSize(SQUARE_SIZE, SQUARE_SIZE);
@@ -167,7 +199,7 @@ public class Table {
 
         public void drawTile(final Board board) {
             setColor();
-            assignImage(board);
+            setImage(board);
             highlightLegalMoves(board);
         }
 
@@ -199,6 +231,14 @@ public class Table {
             return Collections.emptyList();
         }
 
+        public void setRedSquare() {
+            if (xPos % 2 == yPos % 2) {
+                this.setStyle("-fx-background-color: " + lightRedColor);
+            } else {
+                this.setStyle("-fx-background-color: " + darkRedColor);
+            }
+        }
+
         public void setColor() {
             if (xPos % 2 == yPos % 2) {
                 this.setStyle("-fx-background-color: " + lightColor);
@@ -206,7 +246,8 @@ public class Table {
                 this.setStyle("-fx-background-color: " + darkColor);
             }
         }
-        public void assignImage(final Board board) {
+
+        public void setImage(final Board board) {
             getChildren().clear();
             if (board.getSquare(xPos, yPos).isOccupied()) {
                 try {
