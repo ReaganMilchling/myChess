@@ -48,7 +48,20 @@ public class Pawn extends Piece {
         legalMoves.addAll(Utils.calculatePawnAttackHelper(board, 1, 1, this));
         //pawn jump
         if (this.isFirstMove) {
-            legalMoves.addAll(Utils.calculateMovesHelper(board, 0, 2, this));
+            //todo check if move leaves king in check
+            //try/catch to know if we are on the board or not
+            try {
+                int x = this.getPieceXPosition();
+                int y = this.getPieceYPosition() + this.getPlayerTeam().getOffset() * 2;
+                int y1 = this.getPieceYPosition() + this.getPlayerTeam().getOffset();
+                if (!board.getSquare(x, y1).isOccupied()) {
+                    if (!board.getSquare(x, y).isOccupied()) {
+                        legalMoves.add(new Move.NormalMove(board, x, y, this));
+                    }
+                }
+            } catch (IndexOutOfBoundsException ignored){
+
+            }
         }
         //todo add en passant attack move here
         return legalMoves;

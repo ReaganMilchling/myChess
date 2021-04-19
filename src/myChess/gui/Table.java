@@ -31,7 +31,12 @@ import java.util.Collections;
 public class Table {
 
     private Board chessBoard;
-    private BoardPane boardPane;
+
+    private chessPane centerPane;
+    private TopPane topPane;
+    private BottomPane bottomPane;
+    private LeftPane leftPane;
+    private RightPane rightPane;
 
     private final int GUI_SIZE;
     private final int BOARD_SIZE;
@@ -54,7 +59,7 @@ public class Table {
     public Table() {
         this.chessBoard = new Board();
         this.GUI_SIZE = 1200;
-        this.BOARD_SIZE = 900;
+        this.BOARD_SIZE = 920;
         this.SQUARE_SIZE = BOARD_SIZE / 8;
         this.IMAGE_SIZE = (int)(SQUARE_SIZE * 0.8);
         this.DOT_SIZE = IMAGE_SIZE / 5;
@@ -68,25 +73,42 @@ public class Table {
     public Parent createContent() {
 
         BorderPane root = new BorderPane();
-        this.boardPane = new BoardPane();
-        root.setCenter(boardPane);
-
+        this.centerPane = new chessPane();
+        this.topPane = new TopPane();
+        this.bottomPane = new BottomPane();
+        this.leftPane = new LeftPane();
+        this.rightPane = new RightPane();
+        root.setCenter(this.centerPane);
+        root.setTop(this.topPane);
+        root.setBottom(this.bottomPane);
+        root.setLeft(this.leftPane);
+        root.setRight(this.rightPane);
         root.setPrefSize(GUI_SIZE, GUI_SIZE);
 
         return root;
     }
 
-    private class BoardPane extends GridPane {
-        BoardPane() {
+
+    private class chessPane extends GridPane {
+        chessPane() {
             setPadding(new Insets(10, 10, 10, 10));
             setVgap(0);
             setHgap(0);
             setAlignment(Pos.CENTER);
             setPrefSize(BOARD_SIZE, BOARD_SIZE);
-            drawBoard(chessBoard);
+            //setMaxSize(BOARD_SIZE, BOARD_SIZE);
+            drawBoard();
+            this.setStyle("-fx-padding: 0;" +
+                    "-fx-border-style: solid inside;" +
+                    "-fx-border-width: 2;" +
+                    "-fx-border-insets: 0;" +
+                    "-fx-border-radius: 0;" +
+                    "-fx-border-color: #282828;" +
+                    "-fx-background-color: #606060;");
+
         }
 
-        public void drawBoard(final Board board) {
+        public void drawBoard() {
             this.getChildren().clear();
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
@@ -133,12 +155,10 @@ public class Table {
 
         final int xPos;
         final int yPos;
-        public boolean isRed;
 
         SquarePane(int x, int y) {
             this.xPos = x;
             this.yPos = y;
-            this.isRed = false;
             addEventFilter(MouseEvent.MOUSE_CLICKED, new javafx.event.EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent e) {
@@ -150,17 +170,20 @@ public class Table {
                             if (movedPiece.getPieceType().isEmpty()) {
                                 selectedSquare = null;
                             }
-                        } else if (selectedSquare.getPiece().getPieceXPosition() == xPos &&
+                        }
+                        else if (selectedSquare.getPiece().getPieceXPosition() == xPos &&
                                 selectedSquare.getPiece().getPieceYPosition() == yPos) {
                             selectedSquare = null;
                             destinationSquare = null;
                             movedPiece = null;
-                        } else if (chessBoard.getSquare(xPos, yPos).getPiece().getPlayerTeam() ==
+                        }
+                        else if (chessBoard.getSquare(xPos, yPos).getPiece().getPlayerTeam() ==
                                    chessBoard.getCurrentPlayer().getTeam()) {
                             redSquares.clear();
                             selectedSquare = chessBoard.getSquare(xPos, yPos);
                             movedPiece = selectedSquare.getPiece();
-                        } else {
+                        }
+                        else {
                             redSquares.clear();
                             destinationSquare = chessBoard.getSquare(xPos, yPos);
                             destinationPiece = destinationSquare.getPiece();
@@ -178,7 +201,7 @@ public class Table {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                boardPane.drawBoard(chessBoard);
+                                centerPane.drawBoard();
                             }
                         });
                     }
@@ -192,7 +215,7 @@ public class Table {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                boardPane.drawBoard(chessBoard);
+                                centerPane.drawBoard();
                             }
                         });
                     }
@@ -284,5 +307,29 @@ public class Table {
         }
     }
 
+    //getters
+    public Square getSelectedSquare() {
+        return this.selectedSquare;
+    }
+    public Square getDestinationSquare() {
+        return this.destinationSquare;
+    }
+    public Piece getMovedPiece() {
+        return this.movedPiece;
+    }
+    public Piece getDestinationPiece() {
+        return this.destinationPiece;
+    }
+    public Collection<Square> getRedSquares() {
+        return this.redSquares;
+    }
+    //setters
+    public void setSelectedSquare(Square sq) {
+        this.selectedSquare = sq;
+    }
+    public void setDestinationSquare(Square sq) {
+        this.destinationSquare = sq;
+    }
+    //public void
 
 }
