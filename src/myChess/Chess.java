@@ -7,11 +7,12 @@ import myChess.gui.Table;
 
 
 public class Chess extends Application {
+    public Table table = new Table();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Table table = new Table();
+
         Scene scene = new Scene(table.createContent());
 
         primaryStage.setTitle("myChess");

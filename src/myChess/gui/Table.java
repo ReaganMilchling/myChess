@@ -2,15 +2,19 @@ package myChess.gui;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -29,14 +33,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class Table {
+    //This class is a mess, forgive me I am not a UI programmer
 
     private Board chessBoard;
-
     private chessPane centerPane;
-    private TopPane topPane;
-    private BottomPane bottomPane;
-    private LeftPane leftPane;
-    private RightPane rightPane;
 
     private final int GUI_SIZE;
     private final int BOARD_SIZE;
@@ -44,6 +44,8 @@ public class Table {
     private final int IMAGE_SIZE;
     private final int DOT_SIZE;
     private final int FONT_SIZE;
+
+    private int BoardDirection;
 
     private Square selectedSquare;
     private Square destinationSquare;
@@ -58,6 +60,7 @@ public class Table {
 
     public Table() {
         this.chessBoard = new Board();
+        this.BoardDirection = 1;
         this.GUI_SIZE = 1200;
         this.BOARD_SIZE = 920;
         this.SQUARE_SIZE = BOARD_SIZE / 8;
@@ -74,20 +77,81 @@ public class Table {
 
         BorderPane root = new BorderPane();
         this.centerPane = new chessPane();
-        this.topPane = new TopPane();
-        this.bottomPane = new BottomPane();
-        this.leftPane = new LeftPane();
-        this.rightPane = new RightPane();
+        TopPane topPane = new TopPane();
+        BottomPane bottomPane = new BottomPane();
+        LeftPane leftPane = new LeftPane();
+        RightPane rightPane = new RightPane();
         root.setCenter(this.centerPane);
-        root.setTop(this.topPane);
-        root.setBottom(this.bottomPane);
-        root.setLeft(this.leftPane);
-        root.setRight(this.rightPane);
+        root.setTop(topPane);
+        root.setBottom(bottomPane);
+        root.setLeft(leftPane);
+        root.setRight(rightPane);
         root.setPrefSize(GUI_SIZE, GUI_SIZE);
 
         return root;
     }
 
+    public class TopPane extends HBox {
+
+        public TopPane() {
+            createButtons();
+            this.setPrefSize(1200, 150);
+            this.setAlignment(Pos.BASELINE_CENTER);
+            this.setStyle("-fx-padding: 15;" +
+                    "-fx-border-style: solid inside;" +
+                    "-fx-border-width: 2;" +
+                    "-fx-border-insets: 0;" +
+                    "-fx-border-radius: 0;" +
+                    "-fx-border-color: #282828;" +
+                    "-fx-background-color: #606060;");
+        }
+
+        private void createButtons() {
+            Button restart = new Button("Restart");
+            restart.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    chessBoard = new Board();
+                    BoardDirection = 1;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            centerPane.drawBoard();
+                        }
+                    });
+                }
+            });
+            Button flipBoard = new Button("Flip Board");
+            flipBoard.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+
+                    BoardDirection *= -1;
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            centerPane.drawBoard();
+                        }
+                    });
+                }
+            });
+
+            //buttons to view previous moves
+            Button jumpBack = new Button("Jump to Start");
+            jumpBack.setAlignment(Pos.CENTER_RIGHT);
+            Button moveBack = new Button("Move back one");
+            moveBack.setAlignment(Pos.CENTER_RIGHT);
+            Button moveForward = new Button("Move forward one");
+            moveForward.setAlignment(Pos.CENTER_RIGHT);
+            Button jumpForward = new Button("Jump to end");
+            jumpForward.setAlignment(Pos.CENTER_RIGHT);
+
+
+            this.getChildren().addAll(restart, flipBoard, jumpBack, moveBack, moveForward, jumpForward);
+
+        }
+    }
 
     private class chessPane extends GridPane {
         chessPane() {
@@ -105,7 +169,6 @@ public class Table {
                     "-fx-border-radius: 0;" +
                     "-fx-border-color: #282828;" +
                     "-fx-background-color: #606060;");
-
         }
 
         public void drawBoard() {
@@ -113,7 +176,14 @@ public class Table {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     final SquarePane squarePane = new SquarePane(i, j);
-                    this.add(squarePane, i, j, 1, 1);
+                    int abcdOffset = 7;
+                    if (BoardDirection == 1) {
+                        this.add(squarePane, i, j, 1, 1);
+                        abcdOffset = 7;
+                    } else if (BoardDirection == -1) {
+                        this.add(squarePane, i, 8-j, 1, 1);
+                        abcdOffset = 0;
+                    }
                     if (i == 0) {
                         Text text = new Text(String.valueOf(8 - j));
                         squarePane.getChildren().add(text);
@@ -125,7 +195,7 @@ public class Table {
                         text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, FONT_SIZE));
                         StackPane.setAlignment(text, Pos.TOP_LEFT);
                     }
-                    if (j == 7) {
+                    if (j == abcdOffset) {
                         Text text = new Text(Utils.convertToFile(i));
                         squarePane.getChildren().add(text);
                         if (i % 2 == j % 2) {
@@ -306,30 +376,5 @@ public class Table {
             }
         }
     }
-
-    //getters
-    public Square getSelectedSquare() {
-        return this.selectedSquare;
-    }
-    public Square getDestinationSquare() {
-        return this.destinationSquare;
-    }
-    public Piece getMovedPiece() {
-        return this.movedPiece;
-    }
-    public Piece getDestinationPiece() {
-        return this.destinationPiece;
-    }
-    public Collection<Square> getRedSquares() {
-        return this.redSquares;
-    }
-    //setters
-    public void setSelectedSquare(Square sq) {
-        this.selectedSquare = sq;
-    }
-    public void setDestinationSquare(Square sq) {
-        this.destinationSquare = sq;
-    }
-    //public void
 
 }
