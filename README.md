@@ -1,4 +1,4 @@
-# myChess
+# MyChess
 This is a simple chess game built in Java. I play a fair amount of chess and want to build my own engine. The end project will
 have a PGN reader and a custom AI to play against. This program would ideally be meant for training or prepping for tournaments, etc.
 ## Methodology
@@ -11,7 +11,7 @@ You will need to add the following commands to your VM Options in your Run Confi
 ## Libraries Used
 * [JavaFx](https://gluonhq.com/products/javafx/) - GUI framework used
 ## Inspiration 
-*[Software Architecture & Design](https://www.youtube.com/c/amir650/videos) - Youtuber whose tutorials helped jumpstart my creation of this game.
+* [Software Architecture & Design](https://www.youtube.com/c/amir650/videos) - Youtuber whose tutorials helped jumpstart my creation of this game.
 Some of my classes still look very similar to Software Archictecture & Design's classes. I am slowly changing them to be more my style.
 Most are marked with TODO's.
 ## License
