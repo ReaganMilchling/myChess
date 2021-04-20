@@ -7,7 +7,7 @@ of the engine functions have been abstracted to the best of my abilities (such a
 ## Installation
 I used Intellij to build this. You may need to download and attach the JavaFx modules separately to your workspace.
 You will need to add the following commands to your VM Options in your Run Configurations.
-*--module-path "YOU'RE PATH HERE\javafx-sdk-15.0.1\lib" --add-modules javafx.controls,javafx.fxml
+* --module-path "YOU'RE PATH HERE\javafx-sdk-15.0.1\lib" --add-modules javafx.controls,javafx.fxml
 ## Libraries Used
 * [JavaFx](https://gluonhq.com/products/javafx/) - GUI framework used
 ## Inspiration 
