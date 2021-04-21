@@ -66,7 +66,7 @@ public abstract class Player {
         boolean seesKing = false;
         for (Move move : moves) {
 
-            if (!move.getMovedPiece().getPieceType().isKing()) {
+            if (!move.getMovedPiece().getPieceType().isKing() && !isCheck(move)) {
                 Board test = move.testForChecks(getPieces(), getOpponentPieces());
                 Collection<Move> newOppMoves = test.getCurrentPlayer().getOpponent().getLegalMoves();
                 for (Move a : newOppMoves) {
@@ -83,20 +83,31 @@ public abstract class Player {
                     updatedMoves.add(move);
                 }
             } else {
-                updatedMoves.add(move);
+                if (isCheck(move)){
+                    updatedMoves.add(move);
+                }
             }
         }
         return updatedMoves;
     }
 
     private Piece findKing() {
+        //finds the players king
         for (Piece p : this.playerPieces) {
             if (p.getPieceType().isKing()) {
-                //System.out.println(p);
                 return p;
             }
         }
         throw new RuntimeException("Illegal Game State");
+    }
+
+    private boolean isCheck(Move move) {
+        //finds out whether a move is check
+        if (move instanceof Move.AttackMove) {
+            Move.AttackMove m = (Move.AttackMove) move;
+            return m.getAttackedPiece().getPieceType().isKing();
+        }
+        return false;
     }
 
     public Collection<Move> getLegalMoves() {
