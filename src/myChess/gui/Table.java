@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 public class Table {
     //This class is a mess, forgive me I am not a UI programmer
@@ -257,7 +257,6 @@ public class Table {
                             redSquares.clear();
                             destinationSquare = chessBoard.getSquare(xPos, yPos);
                             destinationPiece = destinationSquare.getPiece();
-
                             //creates the move
                             MoveFactory mf = new MoveFactory(chessBoard,
                                                  getMove(chessBoard, selectedSquare.getPiece(), destinationPiece));
@@ -332,13 +331,19 @@ public class Table {
         }
 
         private Collection<Move> getPieceLegalMoves(final Board board) {
+            List<Move> legalMoves = new ArrayList<>();
             if (movedPiece != null) {
                 if (movedPiece.getPieceType() != Piece.PieceType.EMPTY &&
                     movedPiece.getPlayerTeam() == board.getCurrentPlayer().getTeam()) {
-                    return movedPiece.calculateMoves(board);
+                    List<Move> moves = new ArrayList<>(movedPiece.calculateMoves(board));
+                    for (Move m : moves) {
+                        if (board.getCurrentPlayer().isMoveLegal(m)) {
+                            legalMoves.add(m);
+                        }
+                    }
                 }
             }
-            return Collections.emptyList();
+            return legalMoves;
         }
 
         public void setRedSquare() {

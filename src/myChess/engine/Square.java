@@ -20,10 +20,14 @@ public class Square {
 
     @Override
     public String toString() {
-        if (this.getPiece().getPlayerTeam().isBlack()) {
-            return getPiece().toString().toLowerCase();
+        if (this.getPiece().getPieceType().isEmpty()) {
+            return this.getPiece().toString();
         } else {
-            return getPiece().toString();
+            if (this.getPiece().getPlayerTeam().isBlack()) {
+                return getPiece().toString().toLowerCase();
+            } else {
+                return getPiece().toString();
+            }
         }
     }
 }

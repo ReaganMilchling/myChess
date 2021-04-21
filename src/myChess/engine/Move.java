@@ -4,6 +4,8 @@ import myChess.piece.Empty;
 import myChess.piece.Piece;
 import myChess.piece.Rook;
 
+import java.util.Collection;
+
 public abstract class Move {
 
     protected final Board board;
@@ -36,6 +38,24 @@ public abstract class Move {
     }
     public Piece getMovedPiece() {
         return this.movedPiece;
+    }
+
+    public Board testForChecks(Collection<Piece> currentPlayer, Collection<Piece> opponent) {
+        //this is confusing
+        //this function returns a copy of the board class, without the moved piece
+        //this allows for an easy check if the moved piece will leave the king in check
+        final BoardBuilder builder = new BoardBuilder();
+
+        builder.setBoardUnchanged(this.movedPiece, currentPlayer, opponent);
+        if (this.getDestinationYPos() == 0 || this.getDestinationYPos() == 7) {
+            builder.setPiece(this.movedPiece.movePiece(this, true));
+        } else {
+            builder.setPiece(this.movedPiece.movePiece(this));
+        }
+        builder.setNextPlayerTurn(movedPiece.getPlayerTeam());
+        builder.setNull();
+
+        return new Board(builder, movedPiece.getPlayerTeam().isWhite());
     }
 
     public Board execute() {
@@ -81,7 +101,11 @@ public abstract class Move {
 
         @Override
         public String toString() {
-            return movedPiece.toString() + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
+            String p = this.getMovedPiece().toString();
+            if (this.movedPiece.getPlayerTeam().isBlack()) {
+                p = this.movedPiece.toString().toLowerCase();
+            }
+            return p + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
         }
         @Override
         public boolean equals(final Object other) {
@@ -123,7 +147,11 @@ public abstract class Move {
 
         @Override
         public String toString() {
-            return movedPiece.toString() + "x" + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
+            String p = this.getMovedPiece().toString();
+            if (this.movedPiece.getPlayerTeam().isBlack()) {
+                p = this.movedPiece.toString().toLowerCase();
+            }
+            return p + "x" + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
         }
 
         @Override

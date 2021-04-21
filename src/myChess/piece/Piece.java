@@ -133,7 +133,7 @@ public abstract class Piece {
                 return false;
             }
         },
-        QUEEN(10, "Q", '\u265B', '\u2655') {
+        QUEEN(9, "Q", '\u265B', '\u2655') {
             @Override
             public boolean isEmpty() {
                 return false;
@@ -149,7 +149,7 @@ public abstract class Piece {
                 return false;
             }
         },
-        KING(10, "K", '\u265A', '\u2654') {
+        KING(1000, "K", '\u265A', '\u2654') {
             @Override
             public boolean isEmpty() {
                 return false;

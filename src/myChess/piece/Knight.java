@@ -28,6 +28,7 @@ public class Knight extends Piece {
         final List<Move> legalMoves = new ArrayList<>();
 
         legalMoves.addAll(Utils.calculateMovesHelper(board, 1, 2,this));
+        //System.out.println(legalMoves);
         legalMoves.addAll(Utils.calculateMovesHelper(board, 2, 1,this));
         legalMoves.addAll(Utils.calculateMovesHelper(board, 2, -1,this));
         legalMoves.addAll(Utils.calculateMovesHelper(board, 1, -2,this));
@@ -36,6 +37,7 @@ public class Knight extends Piece {
         legalMoves.addAll(Utils.calculateMovesHelper(board, -2, 1,this));
         legalMoves.addAll(Utils.calculateMovesHelper(board, -1, 2,this));
 
+        //System.out.println("Legal Moves Final" + legalMoves);
         return legalMoves;
     }
 

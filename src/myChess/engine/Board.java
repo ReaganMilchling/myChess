@@ -23,25 +23,43 @@ public class Board {
     protected final Player currentPlayer;
 
     public Board() {
+        //this class creates an entirely new board
         this.gameBoard = createBoard();
         this.BlackPlayerPieces = calculatePieces(this.gameBoard, Team.BLACK);
         this.WhitePlayerPieces = calculatePieces(this.gameBoard, Team.WHITE);
         this.BlackPlayerLegalMoves = calculateLegalMoves(BlackPlayerPieces);
         this.WhitePlayerLegalMoves = calculateLegalMoves(WhitePlayerPieces);
-        this.whitePlayer = new Player.WhitePlayer(this, WhitePlayerLegalMoves, BlackPlayerLegalMoves);
-        this.blackPlayer = new Player.BlackPlayer(this, BlackPlayerLegalMoves, WhitePlayerLegalMoves);
+        this.whitePlayer = new Player.WhitePlayer(this, WhitePlayerLegalMoves, BlackPlayerLegalMoves, WhitePlayerPieces, BlackPlayerPieces);
+        this.blackPlayer = new Player.BlackPlayer(this, BlackPlayerLegalMoves, WhitePlayerLegalMoves, BlackPlayerPieces, WhitePlayerPieces);
         this.currentPlayer = whitePlayer;
     }
 
     public Board(BoardBuilder builder) {
+        //this class creates a new board based off the prior board in BoardBuilder
         this.gameBoard = createNewBoard(builder);
         this.BlackPlayerPieces = calculatePieces(this.gameBoard, Team.BLACK);
         this.WhitePlayerPieces = calculatePieces(this.gameBoard, Team.WHITE);
         this.BlackPlayerLegalMoves = calculateLegalMoves(BlackPlayerPieces);
         this.WhitePlayerLegalMoves = calculateLegalMoves(WhitePlayerPieces);
-        this.whitePlayer = new Player.WhitePlayer(this, WhitePlayerLegalMoves, BlackPlayerLegalMoves);
-        this.blackPlayer = new Player.BlackPlayer(this, BlackPlayerLegalMoves, WhitePlayerLegalMoves);
+        this.whitePlayer = new Player.WhitePlayer(this, WhitePlayerLegalMoves, BlackPlayerLegalMoves, WhitePlayerPieces, BlackPlayerPieces);
+        this.blackPlayer = new Player.BlackPlayer(this, BlackPlayerLegalMoves, WhitePlayerLegalMoves, BlackPlayerPieces, WhitePlayerPieces);
         if (builder.getPlayersTurn().isWhite()) {
+            this.currentPlayer = whitePlayer;
+        } else {
+            this.currentPlayer = blackPlayer;
+        }
+    }
+
+    public Board(BoardBuilder builder, boolean isWhite) {
+        //this is solely for testing checks
+        this.gameBoard = createNewBoard(builder);
+        this.BlackPlayerPieces = calculatePieces(this.gameBoard, Team.BLACK);
+        this.WhitePlayerPieces = calculatePieces(this.gameBoard, Team.WHITE);
+        this.BlackPlayerLegalMoves = calculateLegalMoves(BlackPlayerPieces);
+        this.WhitePlayerLegalMoves = calculateLegalMoves(WhitePlayerPieces);
+        this.whitePlayer = new Player.WhitePlayer(this, WhitePlayerLegalMoves, BlackPlayerLegalMoves, WhitePlayerPieces, BlackPlayerPieces, true);
+        this.blackPlayer = new Player.BlackPlayer(this, BlackPlayerLegalMoves, WhitePlayerLegalMoves, BlackPlayerPieces, WhitePlayerPieces, true);
+        if (isWhite) {
             this.currentPlayer = whitePlayer;
         } else {
             this.currentPlayer = blackPlayer;
@@ -118,6 +136,8 @@ public class Board {
         board[1][0] = new Square(new Knight(Team.BLACK, 1, 0, true));
         board[2][0] = new Square(new Bishop(Team.BLACK, 2, 0, true));
         board[3][0] = new Square(new Queen(Team.BLACK, 3, 0, true));
+        //board[4][3] = new Square(new Queen(Team.BLACK, 3, 0, true));
+        //board[3][5] = new Square(new Queen(Team.BLACK, 3, 0, true));
         board[4][0] = new Square(new King(Team.BLACK, 4, 0, true));
         board[5][0] = new Square(new Bishop(Team.BLACK, 5, 0, true));
         board[6][0] = new Square(new Knight(Team.BLACK, 6, 0, true));
