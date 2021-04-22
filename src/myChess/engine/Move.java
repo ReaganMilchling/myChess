@@ -64,7 +64,6 @@ public abstract class Move {
                 builder.setPiece(new Rook(this.getMovedPiece().getPlayerTeam(), 5, this.getCurrentYPos(), false));
             }
         }
-
         return builder.build();
     }
 

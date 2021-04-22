@@ -11,19 +11,24 @@ public class BoardBuilder {
     private Square[][] chessBoard;
     private Team playersTurn;
 
-
     public BoardBuilder() {
         this.chessBoard = new Square[8][8];
+    }
+
+    public Board build() {
+        return new Board(this);
     }
 
     //getters
     public Square[][] getChessBoard() {
         return this.chessBoard;
     }
+
     public Team getPlayersTurn() {
         return this.playersTurn;
     }
 
+    //setters
     public void setNextPlayerTurn(final Team next) {
         this.playersTurn = next;
     }
@@ -54,9 +59,5 @@ public class BoardBuilder {
     public BoardBuilder setPiece(Piece piece) {
         chessBoard[piece.getPieceXPosition()][piece.getPieceYPosition()] = new Square(piece);
         return this;
-    }
-
-    public Board build() {
-        return new Board(this);
     }
 }

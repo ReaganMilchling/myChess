@@ -11,6 +11,7 @@ import java.util.List;
 public class Board {
 
     protected final Square[][] gameBoard;
+    protected final STATE gameState;
     protected final Collection<Piece> BlackPlayerPieces;
     protected final Collection<Piece> WhitePlayerPieces;
 
@@ -31,6 +32,7 @@ public class Board {
         this.whitePlayer = new Player.WhitePlayer(this, WhitePlayerLegalMoves, BlackPlayerLegalMoves, WhitePlayerPieces, BlackPlayerPieces);
         this.blackPlayer = new Player.BlackPlayer(this, BlackPlayerLegalMoves, WhitePlayerLegalMoves, BlackPlayerPieces, WhitePlayerPieces);
         this.currentPlayer = whitePlayer;
+        this.gameState = STATE.PLAYING;
     }
 
     public Board(BoardBuilder builder) {
@@ -47,6 +49,7 @@ public class Board {
         } else {
             this.currentPlayer = blackPlayer;
         }
+        this.gameState = calculateGameState();
     }
 
     public Board(BoardBuilder builder, boolean isWhite) {
@@ -63,9 +66,14 @@ public class Board {
         } else {
             this.currentPlayer = blackPlayer;
         }
+        this.gameState = STATE.PLAYING;
     }
 
     //getters
+    public STATE getGameState() {
+        return this.gameState;
+    }
+
     public Player getWhitePlayer() {
         return this.whitePlayer;
     }
@@ -106,6 +114,17 @@ public class Board {
         return s.toString();
     }
 
+    public STATE calculateGameState() {
+        if (currentPlayer.getLegalMoves().isEmpty()) {
+            if (currentPlayer.getTeam().isWhite()) {
+                return STATE.BLACKCHECKMATE;
+            } else if (currentPlayer.getTeam().isBlack()) {
+                return STATE.WHITECHECKMATE;
+            }
+        }
+        return STATE.PLAYING;
+    }
+
     private Collection<Piece> calculatePieces(Square[][] board, Team player) {
         final List<Piece> pieces = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
@@ -135,8 +154,6 @@ public class Board {
         board[1][0] = new Square(new Knight(Team.BLACK, 1, 0, true));
         board[2][0] = new Square(new Bishop(Team.BLACK, 2, 0, true));
         board[3][0] = new Square(new Queen(Team.BLACK, 3, 0, true));
-        //board[4][3] = new Square(new Queen(Team.BLACK, 3, 0, true));
-        //board[3][5] = new Square(new Queen(Team.BLACK, 3, 0, true));
         board[4][0] = new Square(new King(Team.BLACK, 4, 0, true));
         board[5][0] = new Square(new Bishop(Team.BLACK, 5, 0, true));
         board[6][0] = new Square(new Knight(Team.BLACK, 6, 0, true));
@@ -167,5 +184,66 @@ public class Board {
 
     private Square[][] createNewBoard(BoardBuilder builder) {
         return builder.getChessBoard();
+    }
+
+    public enum STATE {
+        STALEMATE() {
+            @Override
+            public boolean isGameOver() {
+                return true;
+            }
+
+            @Override
+            public boolean isCheckmate() {
+                return false;
+            }
+        },
+        WHITECHECKMATE() {
+            @Override
+            public boolean isGameOver() {
+                return true;
+            }
+
+            @Override
+            public boolean isCheckmate() {
+                return true;
+            }
+        },
+        BLACKCHECKMATE() {
+            @Override
+            public boolean isGameOver() {
+                return true;
+            }
+
+            @Override
+            public boolean isCheckmate() {
+                return true;
+            }
+        },
+        DRAW() {
+            @Override
+            public boolean isGameOver() {
+                return true;
+            }
+
+            @Override
+            public boolean isCheckmate() {
+                return false;
+            }
+        },
+        PLAYING() {
+            @Override
+            public boolean isGameOver() {
+                return false;
+            }
+
+            @Override
+            public boolean isCheckmate() {
+                return false;
+            }
+        };
+
+        public abstract boolean isGameOver();
+        public abstract boolean isCheckmate();
     }
 }

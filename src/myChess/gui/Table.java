@@ -2,8 +2,6 @@ package myChess.gui;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -55,6 +53,8 @@ public class Table {
 
     private final String lightColor;
     private final String darkColor;
+    private final String lightYellowColor;
+    private final String darkYellowColor;
     private final String lightRedColor;
     private final String darkRedColor;
 
@@ -69,6 +69,8 @@ public class Table {
         this.FONT_SIZE = BOARD_SIZE / 50;
         this.lightColor = "#FFFACD";
         this.darkColor = "#6B8E23";
+        this.lightYellowColor = "#fffe29";
+        this.darkYellowColor = "#e1e807";
         this.lightRedColor = "#FA8072";
         this.darkRedColor = "#B22222";
     }
@@ -108,33 +110,17 @@ public class Table {
 
         private void createButtons() {
             Button restart = new Button("Restart");
-            restart.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    chessBoard = new Board();
-                    BoardDirection = 1;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            centerPane.drawBoard();
-                        }
-                    });
-                }
+            restart.setOnAction(actionEvent -> {
+                chessBoard = new Board();
+                BoardDirection = 1;
+                Platform.runLater(() -> centerPane.drawBoard());
             });
             Button flipBoard = new Button("Flip Board");
-            flipBoard.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
+            flipBoard.setOnAction(actionEvent -> {
 
-                    BoardDirection *= -1;
+                BoardDirection *= -1;
 
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            centerPane.drawBoard();
-                        }
-                    });
-                }
+                Platform.runLater(() -> centerPane.drawBoard());
             });
 
             //buttons to view previous moves
@@ -173,6 +159,8 @@ public class Table {
 
         public void drawBoard() {
             this.getChildren().clear();
+
+            //draws the squares on the board
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     final SquarePane squarePane = new SquarePane(i, j);
@@ -184,6 +172,7 @@ public class Table {
                         this.add(squarePane, i, 8-j, 1, 1);
                         abcdOffset = 0;
                     }
+                    squarePane.setColor();
                     if (i == 0) {
                         Text text = new Text(String.valueOf(8 - j));
                         squarePane.getChildren().add(text);
@@ -215,9 +204,24 @@ public class Table {
                             }
                         }
                     }
+                    if (selectedSquare != null) {
+                        if (selectedSquare.getPiece().getPieceXPosition() == i) {
+                            if (selectedSquare.getPiece().getPieceYPosition() == j) {
+                                squarePane.setLightSquare();
+                            }
+                        }
+                    }
+
+                    //adds the visuals for end of game
+                    if (chessBoard.getGameState().isGameOver()) {
+                        if (chessBoard.getGameState().isCheckmate()) {
+                            squarePane.setCheckmate(chessBoard);
+                        } else {
+                            squarePane.setDraw(chessBoard);
+                        }
+                    }
                 }
             }
-
         }
     }
 
@@ -229,65 +233,52 @@ public class Table {
         SquarePane(int x, int y) {
             this.xPos = x;
             this.yPos = y;
-            addEventFilter(MouseEvent.MOUSE_CLICKED, new javafx.event.EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent e) {
-                    if (e.getButton() == MouseButton.PRIMARY) {
-                        if (selectedSquare == null) {
-                            redSquares.clear();
-                            selectedSquare = chessBoard.getSquare(xPos, yPos);
-                            movedPiece = selectedSquare.getPiece();
-                            if (movedPiece.getPieceType().isEmpty()) {
-                                selectedSquare = null;
-                            }
-                        }
-                        else if (selectedSquare.getPiece().getPieceXPosition() == xPos &&
-                                selectedSquare.getPiece().getPieceYPosition() == yPos) {
+            addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    if (selectedSquare == null) {
+                        redSquares.clear();
+                        selectedSquare = chessBoard.getSquare(xPos, yPos);
+                        movedPiece = selectedSquare.getPiece();
+                        if (movedPiece.getPieceType().isEmpty()) {
                             selectedSquare = null;
-                            destinationSquare = null;
-                            movedPiece = null;
                         }
-                        else if (chessBoard.getSquare(xPos, yPos).getPiece().getPlayerTeam() ==
-                                   chessBoard.getCurrentPlayer().getTeam()) {
-                            redSquares.clear();
-                            selectedSquare = chessBoard.getSquare(xPos, yPos);
-                            movedPiece = selectedSquare.getPiece();
-                        }
-                        else {
-                            redSquares.clear();
-                            destinationSquare = chessBoard.getSquare(xPos, yPos);
-                            destinationPiece = destinationSquare.getPiece();
-                            //creates the move
-                            MoveFactory mf = new MoveFactory(chessBoard,
-                                                 getMove(chessBoard, selectedSquare.getPiece(), destinationPiece));
-                            chessBoard = mf.getTransitionBoard();
-
-                            selectedSquare = null;
-                            destinationSquare = null;
-                            movedPiece = null;
-
-                        }
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                centerPane.drawBoard();
-                            }
-                        });
                     }
-                    if (e.getButton() == MouseButton.SECONDARY) {
-                        //right click to add red squares and deselect all
-                        redSquares.add(chessBoard.getSquare(xPos, yPos));
+                    else if (selectedSquare.getPiece().getPieceXPosition() == xPos &&
+                            selectedSquare.getPiece().getPieceYPosition() == yPos) {
+                        selectedSquare = null;
+                        destinationSquare = null;
+                        movedPiece = null;
+                    }
+                    else if (chessBoard.getSquare(xPos, yPos).getPiece().getPlayerTeam() ==
+                               chessBoard.getCurrentPlayer().getTeam()) {
+                        redSquares.clear();
+                        selectedSquare = chessBoard.getSquare(xPos, yPos);
+                        movedPiece = selectedSquare.getPiece();
+                    }
+                    else {
+                        redSquares.clear();
+                        destinationSquare = chessBoard.getSquare(xPos, yPos);
+                        destinationPiece = destinationSquare.getPiece();
+                        //creates the move
+                        MoveFactory mf = new MoveFactory(chessBoard,
+                                             getMove(chessBoard, selectedSquare.getPiece(), destinationPiece));
+                        chessBoard = mf.getTransitionBoard();
+
                         selectedSquare = null;
                         destinationSquare = null;
                         movedPiece = null;
 
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                centerPane.drawBoard();
-                            }
-                        });
                     }
+                    Platform.runLater(() -> centerPane.drawBoard());
+                }
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    //right click to add red squares and deselect all
+                    redSquares.add(chessBoard.getSquare(xPos, yPos));
+                    selectedSquare = null;
+                    destinationSquare = null;
+                    movedPiece = null;
+
+                    Platform.runLater(() -> centerPane.drawBoard());
                 }
             });
             setPrefSize(SQUARE_SIZE, SQUARE_SIZE);
@@ -354,6 +345,14 @@ public class Table {
             }
         }
 
+        public void setLightSquare() {
+            if (xPos % 2 == yPos % 2) {
+                this.setStyle("-fx-background-color: " + lightYellowColor);
+            } else {
+                this.setStyle("-fx-background-color: " + darkYellowColor);
+            }
+        }
+
         public void setColor() {
             if (xPos % 2 == yPos % 2) {
                 this.setStyle("-fx-background-color: " + lightColor);
@@ -362,22 +361,54 @@ public class Table {
             }
         }
 
+        public void setCheckmate(final Board board) {
+            if (board.getGameState() == Board.STATE.WHITECHECKMATE) {
+                if (board.getSquare(xPos, yPos).getPiece().getPieceType().isKing() &&
+                    board.getSquare(xPos, yPos).getPiece().getPlayerTeam().isWhite()) {
+                    this.drawImage("res/checkerboardflag.png");
+                } else if (board.getSquare(xPos, yPos).getPiece().getPieceType().isKing() &&
+                           board.getSquare(xPos, yPos).getPiece().getPlayerTeam().isBlack()) {
+                    this.drawImage("res/whiteflag.png");
+                }
+            } else if (board.getGameState() == Board.STATE.BLACKCHECKMATE) {
+                if (board.getSquare(xPos, yPos).getPiece().getPieceType().isKing() &&
+                        board.getSquare(xPos, yPos).getPiece().getPlayerTeam().isWhite()) {
+                    this.drawImage("res/whiteflag.png");
+                } else if (board.getSquare(xPos, yPos).getPiece().getPieceType().isKing() &&
+                        board.getSquare(xPos, yPos).getPiece().getPlayerTeam().isBlack()) {
+                    this.drawImage("res/checkerboardflag.png");
+                }
+            }
+        }
+
+        public void setDraw(final Board board) {
+            if (board.getSquare(xPos, yPos).getPiece().getPieceType().isKing()) {
+                this.drawImage("res/whiteflag.png");
+            }
+        }
+
         public void setImage(final Board board) {
             getChildren().clear();
             if (board.getSquare(xPos, yPos).isOccupied()) {
-                try {
-                    BufferedImage image = ImageIO.read(new File("res/images/" +
-                            board.getSquare(xPos, yPos).getPiece().getPlayerTeam().toString().charAt(0) +
-                            board.getSquare(xPos, yPos).getPiece().toString() + ".png"));
-                    WritableImage img = SwingFXUtils.toFXImage(image, null);
-                    ImageView imageView = new ImageView(img);
-                    imageView.setFitHeight(IMAGE_SIZE);
-                    imageView.setFitWidth(IMAGE_SIZE);
-                    this.getChildren().add(imageView);
-                    setAlignment(imageView, Pos.CENTER);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                String path = "res/images/" +
+                              board.getSquare(xPos, yPos).getPiece().getPlayerTeam().toString().charAt(0) +
+                              board.getSquare(xPos, yPos).getPiece().toString() + ".png";
+
+                this.drawImage(path);
+            }
+        }
+
+        public void drawImage(String path) {
+            try {
+                BufferedImage image = ImageIO.read(new File(path));
+                WritableImage img = SwingFXUtils.toFXImage(image, null);
+                ImageView imageView = new ImageView(img);
+                imageView.setFitHeight(IMAGE_SIZE);
+                imageView.setFitWidth(IMAGE_SIZE);
+                this.getChildren().add(imageView);
+                setAlignment(imageView, Pos.CENTER);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
