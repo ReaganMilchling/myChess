@@ -49,7 +49,7 @@ public class Table {
     private Square destinationSquare;
     private Piece movedPiece;
     private Piece destinationPiece;
-    private Collection<Square> redSquares = new ArrayList<>();
+    private final Collection<Square> redSquares = new ArrayList<>();
 
     private final String lightColor;
     private final String darkColor;
@@ -115,12 +115,23 @@ public class Table {
                 BoardDirection = 1;
                 Platform.runLater(() -> centerPane.drawBoard());
             });
+
             Button flipBoard = new Button("Flip Board");
             flipBoard.setOnAction(actionEvent -> {
 
                 BoardDirection *= -1;
 
                 Platform.runLater(() -> centerPane.drawBoard());
+            });
+
+            Button changePromoteQueen = new Button("Promote to Queen");
+            changePromoteQueen.setOnAction(actionEvent -> {
+                chessBoard.getCurrentPlayer().changePromotion(true);
+            });
+
+            Button changePromoteHorse = new Button("Promote to Horse");
+            changePromoteHorse.setOnAction(actionEvent -> {
+                chessBoard.getCurrentPlayer().changePromotion(false);
             });
 
             //buttons to view previous moves
@@ -134,7 +145,7 @@ public class Table {
             jumpForward.setAlignment(Pos.CENTER_RIGHT);
 
 
-            this.getChildren().addAll(restart, flipBoard, jumpBack, moveBack, moveForward, jumpForward);
+            this.getChildren().addAll(restart, flipBoard, changePromoteQueen, changePromoteHorse, jumpBack, moveBack, moveForward, jumpForward);
 
         }
     }
@@ -393,7 +404,6 @@ public class Table {
                 String path = "res/images/" +
                               board.getSquare(xPos, yPos).getPiece().getPlayerTeam().toString().charAt(0) +
                               board.getSquare(xPos, yPos).getPiece().toString() + ".png";
-
                 this.drawImage(path);
             }
         }

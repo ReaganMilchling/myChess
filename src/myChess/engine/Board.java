@@ -116,10 +116,14 @@ public class Board {
 
     public STATE calculateGameState() {
         if (currentPlayer.getLegalMoves().isEmpty()) {
-            if (currentPlayer.getTeam().isWhite()) {
+            if (currentPlayer.getTeam().isWhite() && currentPlayer.isInCheck()) {
+                System.out.println(currentPlayer.isInCheck());
                 return STATE.BLACKCHECKMATE;
-            } else if (currentPlayer.getTeam().isBlack()) {
+            } else if (currentPlayer.getTeam().isBlack() && currentPlayer.isInCheck()) {
+                System.out.println(currentPlayer.isInCheck());
                 return STATE.WHITECHECKMATE;
+            } else {
+                return STATE.STALEMATE;
             }
         }
         return STATE.PLAYING;

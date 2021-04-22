@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public class BoardBuilder {
 
-    private Square[][] chessBoard;
+    private final Square[][] chessBoard;
     private Team playersTurn;
 
     public BoardBuilder() {

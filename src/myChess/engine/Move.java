@@ -68,6 +68,10 @@ public abstract class Move {
     }
 
     //getters
+    public Board getBoard() {
+        return this.board;
+    }
+
     public int getCurrentXPos(){
         return this.movedPiece.getPieceXPosition();
     }

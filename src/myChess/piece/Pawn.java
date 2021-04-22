@@ -63,8 +63,15 @@ public class Pawn extends Piece {
     @Override
     public Piece movePiece(Move move) {
         if (move.getDestinationYPos() == 0 || move.getDestinationYPos() == 7) {
-            //todo add horse as well as queen
-            return new Queen(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
+            if (move.getBoard().getCurrentPlayer() != null) {
+                if (move.getBoard().getCurrentPlayer().getPromoteToQueen()) {
+                    return new Queen(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
+                } else {
+                    return new Knight(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
+                }
+            } else {
+                return new Queen(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
+            }
         } else {
             return new Pawn(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
         }

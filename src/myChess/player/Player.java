@@ -16,6 +16,8 @@ public abstract class Player {
     protected final Collection<Piece> playerPieces;
     protected final Collection<Piece> oppPieces;
     protected final Piece king;
+    protected final boolean isInCheck;
+    protected boolean promoteToQueen;
 
     public Player(final Board board,
                   final Collection<Move> moves,
@@ -28,6 +30,8 @@ public abstract class Player {
         this.king = findKing();
         this.opponentLegalMoves = oppMoves;
         this.legalMoves = doesMoveLeaveInCheck(moves);
+        this.isInCheck = isInCheck();
+        this.promoteToQueen = true;
     }
 
     public Player(final Board board,
@@ -36,14 +40,14 @@ public abstract class Player {
                   final Collection<Piece> pieces,
                   final Collection<Piece> oppPieces,
                   final boolean isTest) {
-        //this class doesn't call the leaves king in check method
+        //this class doesn't call several methods that the main class does
         this.board = board;
         this.playerPieces = pieces;
         this.oppPieces = oppPieces;
-        //System.out.println(board.toString());
         this.king = findKing();
         this.opponentLegalMoves = oppMoves;
         this.legalMoves = moves;
+        this.isInCheck = false;
     }
 
     public Collection<Move> doesMoveLeaveInCheck(Collection<Move> moves) {
@@ -100,6 +104,11 @@ public abstract class Player {
         return true;
     }
 
+    public boolean isInCheck() {
+        //same method as KingNotInCheck but called on the actual player class
+        return !kingNotInCheck(this.board, new Move.NormalMove(this.board, this.king.getPieceXPosition(), this.king.getPieceYPosition(), this.king), this.king);
+    }
+
     public static boolean isCheck(Move move) {
         //finds out whether a move is a check
         if (move instanceof Move.AttackMove) {
@@ -124,12 +133,19 @@ public abstract class Player {
         return this.legalMoves.contains(move);
     }
 
-    //getters
-    public Collection<Move> getLegalMoves() {
-        return this.legalMoves;
+    public void changePromotion(boolean bool) {
+        this.promoteToQueen = bool;
     }
+
+    //getters
     public Piece getKing() {
         return king;
+    }
+    public boolean getPromoteToQueen() {
+        return this.promoteToQueen;
+    }
+    public Collection<Move> getLegalMoves() {
+        return this.legalMoves;
     }
     public Collection<Piece> getPieces(){
         return this.playerPieces;
