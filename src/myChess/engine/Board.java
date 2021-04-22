@@ -6,7 +6,6 @@ import myChess.player.Team;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class Board {
@@ -70,27 +69,27 @@ public class Board {
     public Player getWhitePlayer() {
         return this.whitePlayer;
     }
+
     public Player getBlackPlayer() {
         return this.blackPlayer;
     }
+
     public Player getCurrentPlayer() {
         return this.currentPlayer;
     }
+
     public Collection<Piece> getWhitePlayerPieces() {
         return this.WhitePlayerPieces;
     }
+
     public Collection<Piece> getBlackPlayerPieces() {
         return this.BlackPlayerPieces;
     }
-    public Collection<Move> getAllLegalMoves() {
-        List<Move> allLegalMoves = new ArrayList<>();
-        allLegalMoves.addAll(this.whitePlayer.getLegalMoves());
-        allLegalMoves.addAll(this.blackPlayer.getLegalMoves());
-        return Collections.unmodifiableList(allLegalMoves);
-    }
+
     public Square[][] getBoard() {
         return this.gameBoard;
     }
+
     public Square getSquare(int x, int y) {
         return gameBoard[x][y];
     }

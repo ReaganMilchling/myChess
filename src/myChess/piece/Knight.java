@@ -45,9 +45,4 @@ public class Knight extends Piece {
     public Piece movePiece(Move move) {
         return new Knight(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
     }
-
-    @Override
-    public Piece movePiece(Move move, boolean isPromote) {
-        return new Knight(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
-    }
 }

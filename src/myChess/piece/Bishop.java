@@ -39,9 +39,4 @@ public class Bishop extends Piece {
     public Piece movePiece(Move move) {
         return new Bishop(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
     }
-
-    @Override
-    public Piece movePiece(Move move, boolean isPromote) {
-        return new Bishop(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
-    }
 }

@@ -23,35 +23,21 @@ public abstract class Move {
         this.movedPiece = piece;
     }
 
-    //getters
-    public int getCurrentXPos(){
-        return this.movedPiece.getPieceXPosition();
-    }
-    public int getCurrentYPos() {
-        return this.movedPiece.getPieceYPosition();
-    }
-    public int getDestinationXPos() {
-        return this.destinationXPos;
-    }
-    public int getDestinationYPos() {
-        return this.destinationYPos;
-    }
-    public Piece getMovedPiece() {
-        return this.movedPiece;
-    }
-
     public Board testForChecks(Collection<Piece> currentPlayer, Collection<Piece> opponent) {
-        //this is confusing
-        //this function returns a copy of the board class, without the moved piece
+        //this function returns a copy of the board class, with the move made
         //this allows for an easy check if the moved piece will leave the king in check
         final BoardBuilder builder = new BoardBuilder();
-
         builder.setBoardUnchanged(this.movedPiece, currentPlayer, opponent);
-        if (this.getDestinationYPos() == 0 || this.getDestinationYPos() == 7) {
-            builder.setPiece(this.movedPiece.movePiece(this, true));
-        } else {
+
+        if (!(this instanceof AttackMove)){
             builder.setPiece(this.movedPiece.movePiece(this));
+        } else {
+            AttackMove m = (AttackMove) this;
+            if (!m.getAttackedPiece().getPieceType().isKing()) {
+                builder.setPiece(this.movedPiece.movePiece(this));
+            }
         }
+
         builder.setNextPlayerTurn(movedPiece.getPlayerTeam());
         builder.setNull();
 
@@ -60,16 +46,10 @@ public abstract class Move {
 
     public Board execute() {
         final BoardBuilder builder = new BoardBuilder();
-
         builder.setBoardUnchanged(this.movedPiece,
-                                  this.board.getCurrentPlayer().getPieces(),
-                                  this.board.getCurrentPlayer().getOpponent().getPieces());
-
-        if (this.getDestinationYPos() == 0 || this.getDestinationYPos() == 7) {
-            builder.setPiece(this.movedPiece.movePiece(this, true));
-        } else {
-            builder.setPiece(this.movedPiece.movePiece(this));
-        }
+                this.board.getCurrentPlayer().getPieces(),
+                this.board.getCurrentPlayer().getOpponent().getPieces());
+        builder.setPiece(this.movedPiece.movePiece(this));
         builder.setNextPlayerTurn(this.board.getCurrentPlayer().getOpponent().getTeam());
         builder.setNull();
 
@@ -88,11 +68,33 @@ public abstract class Move {
         return builder.build();
     }
 
+    //getters
+    public int getCurrentXPos(){
+        return this.movedPiece.getPieceXPosition();
+    }
+
+    public int getCurrentYPos() {
+        return this.movedPiece.getPieceYPosition();
+    }
+
+    public int getDestinationXPos() {
+        return this.destinationXPos;
+    }
+
+    public int getDestinationYPos() {
+        return this.destinationYPos;
+    }
+
+    public Piece getMovedPiece() {
+        return this.movedPiece;
+    }
+
+    //abstract classes
     public abstract String toString();
     public abstract boolean equals(Object obj);
     public abstract boolean isCastle();
-    public abstract boolean isAttacking();
 
+    //subclasses
     public static class NormalMove extends Move {
 
         public NormalMove(final Board board, int x, int y, Piece piece) {
@@ -105,8 +107,12 @@ public abstract class Move {
             if (this.movedPiece.getPlayerTeam().isBlack()) {
                 p = this.movedPiece.toString().toLowerCase();
             }
+            if (this.movedPiece.getPieceType().isPawn()) {
+                return Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
+            }
             return p + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
         }
+
         @Override
         public boolean equals(final Object other) {
             if (this == other) {
@@ -123,11 +129,6 @@ public abstract class Move {
 
         @Override
         public boolean isCastle() {
-            return false;
-        }
-
-        @Override
-        public boolean isAttacking() {
             return false;
         }
     }
@@ -151,6 +152,9 @@ public abstract class Move {
             if (this.movedPiece.getPlayerTeam().isBlack()) {
                 p = this.movedPiece.toString().toLowerCase();
             }
+            if (this.movedPiece.getPieceType().isPawn()) {
+                return "x" + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
+            }
             return p + "x" + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
         }
 
@@ -171,11 +175,6 @@ public abstract class Move {
         @Override
         public boolean isCastle() {
             return false;
-        }
-
-        @Override
-        public boolean isAttacking() {
-            return true;
         }
     }
 
@@ -218,11 +217,5 @@ public abstract class Move {
         public boolean isCastle() {
             return true;
         }
-
-        @Override
-        public boolean isAttacking() {
-            return false;
-        }
     }
-
 }

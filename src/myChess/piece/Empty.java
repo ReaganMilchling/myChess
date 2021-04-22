@@ -24,11 +24,6 @@ public class Empty extends Piece {
     }
 
     @Override
-    public Piece movePiece(Move move, boolean isPromote) {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return "-";
     }

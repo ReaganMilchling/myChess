@@ -39,9 +39,4 @@ public class Rook extends Piece {
     public Piece movePiece(Move move) {
         return new Rook(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
     }
-
-    @Override
-    public Piece movePiece(Move move, boolean isPromote) {
-        return new Rook(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
-    }
 }

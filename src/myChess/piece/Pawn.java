@@ -13,12 +13,6 @@ public class Pawn extends Piece {
 
     public Pawn(Team playerType,
                 final int pieceXPosition,
-                final int pieceYPosition) {
-        super(PieceType.PAWN, playerType, pieceXPosition, pieceYPosition, true);
-    }
-
-    public Pawn(Team playerType,
-                final int pieceXPosition,
                 final int pieceYPosition,
                 final boolean isFirstMove) {
         super(PieceType.PAWN, playerType, pieceXPosition, pieceYPosition, isFirstMove);
@@ -48,7 +42,6 @@ public class Pawn extends Piece {
         legalMoves.addAll(Utils.calculatePawnAttackHelper(board, 1, 1, this));
         //pawn jump
         if (this.isFirstMove) {
-            //todo check if move leaves king in check
             //try/catch to know if we are on the board or not
             try {
                 int x = this.getPieceXPosition();
@@ -69,12 +62,11 @@ public class Pawn extends Piece {
 
     @Override
     public Piece movePiece(Move move) {
-        return new Pawn(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
-    }
-
-    @Override
-    public Piece movePiece(Move move, boolean isPromote) {
-        //todo add choice for promotion
-        return new Queen(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
+        if (move.getDestinationYPos() == 0 || move.getDestinationYPos() == 7) {
+            //todo add horse as well as queen
+            return new Queen(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
+        } else {
+            return new Pawn(move.getMovedPiece().playerTeam, move.getDestinationXPos(), move.getDestinationYPos(), false);
+        }
     }
 }

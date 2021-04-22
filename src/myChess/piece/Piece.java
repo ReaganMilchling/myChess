@@ -1,9 +1,8 @@
 package myChess.piece;
 
-import myChess.player.Team;
 import myChess.engine.Board;
 import myChess.engine.Move;
-import myChess.engine.Utils;
+import myChess.player.Team;
 
 import java.util.Collection;
 
@@ -31,25 +30,26 @@ public abstract class Piece {
     public int getPieceXPosition() {
         return this.pieceXPosition;
     }
+
     public int getPieceYPosition() {
         return this.pieceYPosition;
     }
+
     public boolean isFirstMove() {
         return this.isFirstMove;
     }
+
     public Team getPlayerTeam() {
         return this.playerTeam;
     }
+
     public PieceType getPieceType() {
         return this.pieceType;
     }
-    public String toStringPos() {
-        return PieceType.PAWN.toString() + (8 - this.pieceYPosition) + Utils.convertToFile(this.pieceXPosition);
-    }
+
     //abstract classes
     public abstract Collection<Move> calculateMoves(final Board board);
     public abstract Piece movePiece(Move move);
-    public abstract Piece movePiece(Move move, boolean isPromote);
     public abstract String toString();
 
     @Override
@@ -84,6 +84,11 @@ public abstract class Piece {
             public boolean isKing() {
                 return false;
             }
+
+            @Override
+            public boolean isPawn() {
+                return true;
+            }
         },
         ROOK(5, "R", '\u265C', '\u2656') {
             @Override
@@ -98,6 +103,11 @@ public abstract class Piece {
 
             @Override
             public boolean isKing() {
+                return false;
+            }
+
+            @Override
+            public boolean isPawn() {
                 return false;
             }
         },
@@ -116,6 +126,11 @@ public abstract class Piece {
             public boolean isKing() {
                 return false;
             }
+
+            @Override
+            public boolean isPawn() {
+                return false;
+            }
         },
         KNIGHT(3, "N", '\u265E', '\u2658') {
             @Override
@@ -130,6 +145,11 @@ public abstract class Piece {
 
             @Override
             public boolean isKing() {
+                return false;
+            }
+
+            @Override
+            public boolean isPawn() {
                 return false;
             }
         },
@@ -148,6 +168,11 @@ public abstract class Piece {
             public boolean isKing() {
                 return false;
             }
+
+            @Override
+            public boolean isPawn() {
+                return false;
+            }
         },
         KING(1000, "K", '\u265A', '\u2654') {
             @Override
@@ -164,6 +189,11 @@ public abstract class Piece {
             public boolean isKing() {
                 return true;
             }
+
+            @Override
+            public boolean isPawn() {
+                return false;
+            }
         },
         EMPTY(0, "E", '0', '0') {
             @Override
@@ -178,6 +208,11 @@ public abstract class Piece {
 
             @Override
             public boolean isKing() {
+                return false;
+            }
+
+            @Override
+            public boolean isPawn() {
                 return false;
             }
         };
@@ -211,5 +246,6 @@ public abstract class Piece {
         public abstract boolean isEmpty();
         public abstract boolean isRook();
         public abstract boolean isKing();
+        public abstract boolean isPawn();
     }
 }
