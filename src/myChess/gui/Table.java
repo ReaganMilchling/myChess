@@ -110,6 +110,7 @@ public class Table {
 
         private void createButtons() {
             Button restart = new Button("Restart");
+
             restart.setOnAction(actionEvent -> {
                 chessBoard = new Board();
                 BoardDirection = 1;
@@ -125,14 +126,10 @@ public class Table {
             });
 
             Button changePromoteQueen = new Button("Promote to Queen");
-            changePromoteQueen.setOnAction(actionEvent -> {
-                chessBoard.getCurrentPlayer().changePromotion(true);
-            });
+            changePromoteQueen.setOnAction(actionEvent -> chessBoard.getCurrentPlayer().changePromotion(true));
 
             Button changePromoteHorse = new Button("Promote to Horse");
-            changePromoteHorse.setOnAction(actionEvent -> {
-                chessBoard.getCurrentPlayer().changePromotion(false);
-            });
+            changePromoteHorse.setOnAction(actionEvent -> chessBoard.getCurrentPlayer().changePromotion(false));
 
             //buttons to view previous moves
             Button jumpBack = new Button("Jump to Start");

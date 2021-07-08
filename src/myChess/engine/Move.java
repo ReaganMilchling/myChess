@@ -12,6 +12,7 @@ public abstract class Move {
     protected final int destinationXPos;
     protected final int destinationYPos;
     protected final Piece movedPiece;
+    //todo check for checks here
 
     public Move(final Board board,
                 final int x,
@@ -64,6 +65,7 @@ public abstract class Move {
                 builder.setPiece(new Rook(this.getMovedPiece().getPlayerTeam(), 5, this.getCurrentYPos(), false));
             }
         }
+        builder.setMove(this.toString());
         return builder.build();
     }
 
@@ -107,9 +109,6 @@ public abstract class Move {
         @Override
         public String toString() {
             String p = this.getMovedPiece().toString();
-            if (this.movedPiece.getPlayerTeam().isBlack()) {
-                p = this.movedPiece.toString().toLowerCase();
-            }
             if (this.movedPiece.getPieceType().isPawn()) {
                 return Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
             }
@@ -152,9 +151,7 @@ public abstract class Move {
         @Override
         public String toString() {
             String p = this.getMovedPiece().toString();
-            if (this.movedPiece.getPlayerTeam().isBlack()) {
-                p = this.movedPiece.toString().toLowerCase();
-            }
+
             if (this.movedPiece.getPieceType().isPawn()) {
                 return "x" + Utils.convertToFile(destinationXPos) + (8 - destinationYPos);
             }

@@ -51,6 +51,7 @@ public abstract class Player {
     }
 
     public Collection<Move> doesMoveLeaveInCheck(Collection<Move> moves) {
+        //todo recursion
         //checks the incoming moves and returns only the moves that do not leave the players kind in check
         final List<Move> updatedMoves = new ArrayList<>();
         boolean seesKing = false;

@@ -10,6 +10,7 @@ public class BoardBuilder {
 
     private final Square[][] chessBoard;
     private Team playersTurn;
+    private String move;
 
     public BoardBuilder() {
         this.chessBoard = new Square[8][8];
@@ -27,8 +28,15 @@ public class BoardBuilder {
     public Team getPlayersTurn() {
         return this.playersTurn;
     }
+    public String getMove() {
+        return this.move;
+    }
 
     //setters
+    public void setMove(String move) {
+        this.move = move;
+    }
+
     public void setNextPlayerTurn(final Team next) {
         this.playersTurn = next;
     }

@@ -8,6 +8,7 @@ public class MoveFactory {
         if (board.getCurrentPlayer().isMoveLegal(move)) {
             //makes the move and sets it equal to transition board
             this.transitionBoard = move.execute();
+            System.out.println(transitionBoard.getLastMove());
             //todo log the move to stack
         } else {
             //resets the transition board to the original board

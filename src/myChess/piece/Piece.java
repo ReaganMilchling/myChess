@@ -69,7 +69,7 @@ public abstract class Piece {
     }
 
     public enum PieceType {
-        PAWN(1, "P", '\u265F', '\u2659'){
+        PAWN(1, "p", '\u265F', '\u2659'){
             @Override
             public boolean isEmpty() {
                 return false;
@@ -90,7 +90,7 @@ public abstract class Piece {
                 return true;
             }
         },
-        ROOK(5, "R", '\u265C', '\u2656') {
+        ROOK(5, "r", '\u265C', '\u2656') {
             @Override
             public boolean isEmpty() {
                 return false;
@@ -111,7 +111,7 @@ public abstract class Piece {
                 return false;
             }
         },
-        BISHOP(3, "B", '\u265D', '\u2657') {
+        BISHOP(3, "b", '\u265D', '\u2657') {
             @Override
             public boolean isEmpty() {
                 return false;
@@ -132,7 +132,7 @@ public abstract class Piece {
                 return false;
             }
         },
-        KNIGHT(3, "N", '\u265E', '\u2658') {
+        KNIGHT(3, "n", '\u265E', '\u2658') {
             @Override
             public boolean isEmpty() {
                 return false;
@@ -153,7 +153,7 @@ public abstract class Piece {
                 return false;
             }
         },
-        QUEEN(9, "Q", '\u265B', '\u2655') {
+        QUEEN(9, "q", '\u265B', '\u2655') {
             @Override
             public boolean isEmpty() {
                 return false;
@@ -174,7 +174,7 @@ public abstract class Piece {
                 return false;
             }
         },
-        KING(1000, "K", '\u265A', '\u2654') {
+        KING(1000, "k", '\u265A', '\u2654') {
             @Override
             public boolean isEmpty() {
                 return false;
@@ -195,7 +195,7 @@ public abstract class Piece {
                 return false;
             }
         },
-        EMPTY(0, "E", '0', '0') {
+        EMPTY(0, "e", '0', '0') {
             @Override
             public boolean isEmpty() {
                 return true;

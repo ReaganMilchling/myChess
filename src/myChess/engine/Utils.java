@@ -32,14 +32,14 @@ public class Utils {
 
     public static String convertToFile(int num) {
         return switch (num) {
-            case 0 -> "A";
-            case 1 -> "B";
-            case 2 -> "C";
-            case 3 -> "D";
-            case 4 -> "E";
-            case 5 -> "F";
-            case 6 -> "G";
-            case 7 -> "H";
+            case 0 -> "a";
+            case 1 -> "b";
+            case 2 -> "c";
+            case 3 -> "d";
+            case 4 -> "e";
+            case 5 -> "f";
+            case 6 -> "g";
+            case 7 -> "h";
             default -> "";
         };
     }
@@ -104,8 +104,8 @@ public class Utils {
                 } else {
                     legalMovesHelper.add(new Move.NormalMove(board, x, y, piece));
                 }
-            } catch (IndexOutOfBoundsException e){
-                break;
+            } catch (IndexOutOfBoundsException ignored){
+
             }
         }
         return legalMovesHelper;

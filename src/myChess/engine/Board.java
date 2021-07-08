@@ -21,6 +21,7 @@ public class Board {
     protected final Player.WhitePlayer whitePlayer;
     protected final Player.BlackPlayer blackPlayer;
     protected final Player currentPlayer;
+    protected final String lastMove;
 
     public Board() {
         //this class creates an entirely new board
@@ -33,6 +34,7 @@ public class Board {
         this.blackPlayer = new Player.BlackPlayer(this, BlackPlayerLegalMoves, WhitePlayerLegalMoves, BlackPlayerPieces, WhitePlayerPieces);
         this.currentPlayer = whitePlayer;
         this.gameState = STATE.PLAYING;
+        this.lastMove = "";
     }
 
     public Board(BoardBuilder builder) {
@@ -50,6 +52,7 @@ public class Board {
             this.currentPlayer = blackPlayer;
         }
         this.gameState = calculateGameState();
+        this.lastMove = builder.getMove();
     }
 
     public Board(BoardBuilder builder, boolean isWhite) {
@@ -67,6 +70,7 @@ public class Board {
             this.currentPlayer = blackPlayer;
         }
         this.gameState = STATE.PLAYING;
+        this.lastMove = "";
     }
 
     //getters
@@ -188,6 +192,10 @@ public class Board {
 
     private Square[][] createNewBoard(BoardBuilder builder) {
         return builder.getChessBoard();
+    }
+
+    public String getLastMove() {
+        return this.lastMove;
     }
 
     public enum STATE {
